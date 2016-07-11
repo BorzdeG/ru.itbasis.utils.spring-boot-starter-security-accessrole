@@ -1,0 +1,9 @@
+# Поддержка Spring-прав доступа как для простых классов, так и для enum-классов, реализующих интерфейс IAccessRole.
+
+Пример работы можно увидеть в тестовых классах link:blob/master/src/test/java/sample/ru/itbasis/utils/spring/security/accessrole/CoreAccessRole.java[CoreAccessRole], link:blob/master/src/test/java/sample/ru/itbasis/utils/spring/security/accessrole/CustomAccessRole.java[CustomAccessRole] и link:blob/master/src/test/java/sample/ru/itbasis/utils/spring/security/accessrole/entity/TestEntity.java[TestEntity]
+
+
+## В планах
+
+1. Добавить поддержку для аннотации @Secured
+1. Добавить сохранение сущностей в отдельную таблицу БД для возможности связывания через id записей
