@@ -1,0 +1,2 @@
+ru.itbasis.utils.spring.security.accessrole.AccessRoleAutoConfiguration=ru.itbasis.utils.spring.security.accessrole.AccessRoleAutoConfiguration
+ru.itbasis.utils.spring.security.accessrole.AccessRoleJpaAutoConfiguration=ru.itbasis.utils.spring.security.accessrole.AccessRoleJpaAutoConfiguration
