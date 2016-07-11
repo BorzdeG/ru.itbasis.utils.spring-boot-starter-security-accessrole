@@ -1,0 +1,23 @@
+# Adding to the Spring application permissions for simple classes, and for the enum-classes that implement the interface IAccessRole.
+
+An example of the work can be seen in the test class link:src/test/java/sample/ru/itbasis/utils/spring/security/accessrole/CoreAccessRole.java[CoreAccessRole], link:src/test/java/sample/ru/itbasis/utils/spring/security/accessrole/CustomAccessRole.java[CustomAccessRole] and link:src/test/java/sample/ru/itbasis/utils/spring/security/accessrole/entity/TestEntity.java[TestEntity]
+
+## How to work with the kernel
+
+To work just connect the module to implement IAccessRole interface and add an annotation @AccessRole or its derivatives.
+
+An example of the work can be seen in the test class link:src/test/java/sample/ru/itbasis/utils/spring/security/accessrole/CoreAccessRole.java[CoreAccessRole], link:src/test/java/sample/ru/itbasis/utils/spring/security/accessrole/CustomAccessRole.java[CustomAccessRole]
+
+## How to work with the module in collaboration with Hibernate
+
+To work just connect the module and configure application Hibernate EntityManager.
+An example of the work can be seen in the test class link:src/test/java/sample/ru/itbasis/utils/spring/security/accessrole/entity/TestEntity.java[TestEntity].
+
+Roles are stored in the database in one line with the division of roles names comma to the same column and in the form of separate lines using annotations @ElementCollection
+
+---
+In the plans:
+
+1. Add support for annotations @Secured
+1. Add the preservation of the entity into a separate database table to be able to bind through the field "id" records
+1. Add examples as individual modules

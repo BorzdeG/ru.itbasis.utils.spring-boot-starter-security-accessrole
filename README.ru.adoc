@@ -1,9 +1,23 @@
-# Поддержка Spring-прав доступа как для простых классов, так и для enum-классов, реализующих интерфейс IAccessRole.
+# Добавление в Spring приложение прав доступа как для простых классов, так и для enum-классов, реализующих интерфейс IAccessRole.
 
 Пример работы можно увидеть в тестовых классах link:src/test/java/sample/ru/itbasis/utils/spring/security/accessrole/CoreAccessRole.java[CoreAccessRole], link:src/test/java/sample/ru/itbasis/utils/spring/security/accessrole/CustomAccessRole.java[CustomAccessRole] и link:src/test/java/sample/ru/itbasis/utils/spring/security/accessrole/entity/TestEntity.java[TestEntity]
 
+## Описание работы с ядром
 
-## В планах
+Для работы достаточно подключить модуль, реализовать интерфейс IAccessRole и добавить аннотацию @AccessRole или её производные.
+
+Пример работы можно увидеть в тестовых классах link:src/test/java/sample/ru/itbasis/utils/spring/security/accessrole/CoreAccessRole.java[CoreAccessRole], link:src/test/java/sample/ru/itbasis/utils/spring/security/accessrole/CustomAccessRole.java[CustomAccessRole]
+
+## Описание работы с модулем совместно с Hibernate
+
+Для работы достаточно подключить модуль и настроить в приложении Hibernate EntityManager.
+Пример работы можно увидеть в тестовом классе link:src/test/java/sample/ru/itbasis/utils/spring/security/accessrole/entity/TestEntity.java[TestEntity].
+
+Роли сохраняются в БД в одну строку с разделением имён ролей запятой для одной колонки и в виде отдельных строк при использовании аннотации @ElementCollection
+
+---
+В планах:
 
 1. Добавить поддержку для аннотации @Secured
 1. Добавить сохранение сущностей в отдельную таблицу БД для возможности связывания через id записей
+1. Добавить примеры в виде отдельных модулей
