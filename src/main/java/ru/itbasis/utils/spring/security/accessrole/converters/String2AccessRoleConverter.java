@@ -9,6 +9,7 @@ import ru.itbasis.utils.spring.security.accessrole.IAccessRole;
 import ru.itbasis.utils.spring.security.accessrole.annotation.AccessRoleConverter;
 
 import static org.apache.commons.lang3.ClassUtils.getSimpleName;
+import static org.apache.commons.lang3.StringUtils.trimToEmpty;
 
 @Slf4j
 @AccessRoleConverter
@@ -19,9 +20,10 @@ public final class String2AccessRoleConverter implements Converter<String, IAcce
 	@Override
 	public IAccessRole convert(final String source) {
 		log.trace("source: {}", source);
+		if (trimToEmpty(source).isEmpty()) { return null; }
 
 		@SuppressWarnings("unchecked")
-		final IAccessRole target = (IAccessRole) applicationContext.getBean(IAccessRole.BEAN_PREFIX + source);
+		final IAccessRole target = (IAccessRole) applicationContext.getBean(IAccessRole.BEAN_PREFIX + source.trim());
 		if (log.isTraceEnabled()) {
 			log.trace("target class: {}", getSimpleName(target, null));
 			log.trace("target: {}", target);

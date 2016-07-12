@@ -18,9 +18,23 @@ public class String2AccessRoleArrayConverterTest extends AbstractCoreTests {
 	public static Object[][] dataConvert() {
 		return new Object[][]{
 			{EMPTY, new IAccessRole[]{}}
+			, {",", new IAccessRole[]{}}
+			, {",,", new IAccessRole[]{}}
+			, {", ,", new IAccessRole[]{}}
+			, {" , ,", new IAccessRole[]{}}
+			, {" , , ", new IAccessRole[]{}}
 			, {"CORE_GUEST", new IAccessRole[]{CoreAccessRole.GUEST}}
+			, {",CORE_GUEST", new IAccessRole[]{CoreAccessRole.GUEST}}
+			, {" ,CORE_GUEST", new IAccessRole[]{CoreAccessRole.GUEST}}
+			, {", CORE_GUEST", new IAccessRole[]{CoreAccessRole.GUEST}}
+			, {"CORE_GUEST,", new IAccessRole[]{CoreAccessRole.GUEST}}
+			, {"CORE_GUEST ,", new IAccessRole[]{CoreAccessRole.GUEST}}
+			, {",CORE_GUEST,", new IAccessRole[]{CoreAccessRole.GUEST}}
+			, {" ,CORE_GUEST, ", new IAccessRole[]{CoreAccessRole.GUEST}}
 			, {"CORE_ADMIN,CORE_GUEST", new IAccessRole[]{CoreAccessRole.ADMIN, CoreAccessRole.GUEST}}
 			, {"CORE_GUEST,CORE_ADMIN", new IAccessRole[]{CoreAccessRole.ADMIN, CoreAccessRole.GUEST}}
+			, {"CORE_GUEST,CORE_GUEST,CORE_ADMIN", new IAccessRole[]{CoreAccessRole.ADMIN, CoreAccessRole.GUEST, CoreAccessRole.GUEST}}
+			, {"CORE_GUEST,CORE_ADMIN,CORE_GUEST", new IAccessRole[]{CoreAccessRole.ADMIN, CoreAccessRole.GUEST, CoreAccessRole.GUEST}}
 		};
 	}
 

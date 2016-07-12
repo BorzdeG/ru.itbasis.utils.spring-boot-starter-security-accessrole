@@ -8,6 +8,9 @@ import ru.itbasis.utils.spring.security.accessrole.AbstractCoreTests;
 import ru.itbasis.utils.spring.security.accessrole.IAccessRole;
 import sample.ru.itbasis.utils.spring.security.accessrole.CoreAccessRole;
 
+import static org.apache.commons.lang3.StringUtils.EMPTY;
+import static org.apache.commons.lang3.StringUtils.SPACE;
+
 public class String2AccessRoleConverterTest extends AbstractCoreTests {
 	@Autowired
 	private String2AccessRoleConverter converter;
@@ -15,7 +18,12 @@ public class String2AccessRoleConverterTest extends AbstractCoreTests {
 	@DataProvider(name = "dataConvert")
 	public static Object[][] dataConvert() {
 		return new Object[][]{
-			{"CORE_GUEST", CoreAccessRole.GUEST}
+			{null, null}
+			, {EMPTY, null}
+			, {SPACE, null}
+			, {"CORE_GUEST", CoreAccessRole.GUEST}
+			, {" CORE_GUEST", CoreAccessRole.GUEST}
+			, {"CORE_GUEST ", CoreAccessRole.GUEST}
 			, {"CORE_ADMIN", CoreAccessRole.ADMIN}
 		};
 	}

@@ -20,11 +20,13 @@ import sample.ru.itbasis.utils.spring.security.accessrole.repository.TestEntityR
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
-import java.sql.PreparedStatement;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
+
+import static org.apache.commons.lang3.StringUtils.EMPTY;
+import static org.apache.commons.lang3.StringUtils.SPACE;
 
 @SuppressWarnings({"SqlNoDataSourceInspection", "SqlDialectInspection", "SpringJavaAutowiredMembersInspection"})
 @SpringBootTest(classes = {TestBootApplication.class})
@@ -36,6 +38,36 @@ public class AccessRoleJavaTypeDescriptorTest extends AbstractTestNGSpringContex
 	private TestEntityRepository testEntityRepository;
 	@PersistenceContext
 	private EntityManager        entityManager;
+
+	@DataProvider(name = "dataFromStringArray")
+	public static Object[][] dataFromStringArray() {
+		return new Object[][]{
+			{null, null}
+			, {EMPTY, null}
+			, {SPACE, null}
+			, {",", null}
+			, {" ,", null}
+			, {" , ", null}
+			, {"CORE_GUEST", new IAccessRole[]{CoreAccessRole.GUEST}}
+			, {"CORE_GUEST,CORE_GUEST", new IAccessRole[]{CoreAccessRole.GUEST, CoreAccessRole.GUEST}}
+			, {"CORE_ADMIN,CORE_GUEST", new IAccessRole[]{CoreAccessRole.ADMIN, CoreAccessRole.GUEST}}
+			, {"CORE_GUEST,CORE_ADMIN", new IAccessRole[]{CoreAccessRole.ADMIN, CoreAccessRole.GUEST}}
+			, {"CORE_ADMIN", new IAccessRole[]{CoreAccessRole.ADMIN}}
+			, {"CORE_GUEST,CUSTOM_GUEST", new IAccessRole[]{CoreAccessRole.GUEST, CustomAccessRole.GUEST}}
+			, {"CUSTOM_GUEST,CORE_GUEST", new IAccessRole[]{CoreAccessRole.GUEST, CustomAccessRole.GUEST}}
+			, {",CORE_GUEST", new IAccessRole[]{CoreAccessRole.GUEST}}
+			, {"CORE_GUEST,", new IAccessRole[]{CoreAccessRole.GUEST}}
+		};
+	}
+
+	@DataProvider(name = "dataFromStringNull")
+	public static Object[][] dataFromStringNull() {
+		return new Object[][]{
+			{null}
+			, {EMPTY}
+			, {SPACE}
+		};
+	}
 
 	@DataProvider(name = "dataFromStringOne")
 	public static Object[][] dataFromStringOne() {
@@ -50,9 +82,11 @@ public class AccessRoleJavaTypeDescriptorTest extends AbstractTestNGSpringContex
 	public static Object[][] dataToStringArray() {
 		return new Object[][]{
 			{new IAccessRole[]{CoreAccessRole.GUEST}, "CORE_GUEST"}
+			, {new IAccessRole[]{CustomAccessRole.GUEST}, "CUSTOM_GUEST"}
 			, {new IAccessRole[]{CoreAccessRole.GUEST, CoreAccessRole.ADMIN}, "CORE_ADMIN,CORE_GUEST"}
 			, {new IAccessRole[]{CoreAccessRole.ADMIN, CoreAccessRole.GUEST}, "CORE_ADMIN,CORE_GUEST"}
 			, {new IAccessRole[]{CoreAccessRole.GUEST, CoreAccessRole.GUEST}, "CORE_GUEST"}
+			, {new IAccessRole[]{CoreAccessRole.GUEST, CustomAccessRole.GUEST}, "CORE_GUEST,CUSTOM_GUEST"}
 			, {new IAccessRole[]{CoreAccessRole.ADMIN}, "CORE_ADMIN"}
 		};
 	}
@@ -105,27 +139,29 @@ public class AccessRoleJavaTypeDescriptorTest extends AbstractTestNGSpringContex
 		jdbcTemplate.execute("DELETE FROM test_entity");
 	}
 
+	@Test(dataProvider = "dataFromStringArray")
+	public void testFromStringArray(final String role, final IAccessRole[] expectedAccessRoles) throws Exception {
+		jdbcTemplate.update("INSERT INTO test_entity (id, roles) VALUES (1,?)", role);
+
+		final TestEntity testEntity = entityManager.find(TestEntity.class, 1L);
+		Assert.assertNotNull(testEntity);
+		Assert.assertEquals(testEntity.getRoles(), expectedAccessRoles);
+
+	}
+
 	@Test(dataProvider = "dataFromStringOne")
 	public void testFromStringOne(final String role, final IAccessRole expectedAccessRole) throws Exception {
-		jdbcTemplate.update(connection -> {
-			PreparedStatement ps = connection.prepareStatement("INSERT INTO test_entity (id, role) VALUES (?,?)");
-			ps.setLong(1, 1);
-			ps.setString(2, role);
-			return ps;
-		});
+		jdbcTemplate.update("INSERT INTO test_entity (id, role) VALUES (1,?)", role);
+
 		final TestEntity testEntity = entityManager.find(TestEntity.class, 1L);
 		Assert.assertNotNull(testEntity);
 		Assert.assertEquals(testEntity.getRole(), expectedAccessRole);
 	}
 
-	@Test
-	public void testFromStringOneAsNull() throws Exception {
-		jdbcTemplate.update(connection -> {
-			PreparedStatement ps = connection.prepareStatement("INSERT INTO test_entity (id, role) VALUES (?,?)");
-			ps.setLong(1, 1);
-			ps.setString(2, null);
-			return ps;
-		});
+	@Test(dataProvider = "dataFromStringNull")
+	public void testFromStringOneAsNull(final String role) throws Exception {
+		jdbcTemplate.update("INSERT INTO test_entity (id, role) VALUES (1,?)", role);
+
 		final TestEntity testEntity = entityManager.find(TestEntity.class, 1L);
 		Assert.assertNotNull(testEntity);
 		Assert.assertNull(testEntity.getRole());

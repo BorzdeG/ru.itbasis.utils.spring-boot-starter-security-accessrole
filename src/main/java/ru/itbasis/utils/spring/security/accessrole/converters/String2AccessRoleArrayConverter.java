@@ -20,7 +20,8 @@ public final class String2AccessRoleArrayConverter implements Converter<String, 
 	private final AccessRoleComparator       accessRoleComparator;
 
 	public String2AccessRoleArrayConverter(final String2AccessRoleConverter string2AccessRoleConverter,
-																				 final AccessRoleComparator accessRoleComparator) {
+																				 final AccessRoleComparator accessRoleComparator
+	) {
 		this.string2AccessRoleConverter = string2AccessRoleConverter;
 		this.accessRoleComparator = accessRoleComparator;
 	}
@@ -35,6 +36,7 @@ public final class String2AccessRoleArrayConverter implements Converter<String, 
 																			 .parallel()
 																			 .map(string2AccessRoleConverter::convert)
 																			 .sorted(accessRoleComparator)
+																			 .filter(accessRole -> accessRole != null)
 																			 .toArray(IAccessRole[]::new);
 		if (log.isDebugEnabled()) { log.debug("target: {}", Arrays.asList(target)); }
 		return target;
