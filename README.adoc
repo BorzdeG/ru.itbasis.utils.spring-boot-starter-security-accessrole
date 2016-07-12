@@ -18,6 +18,5 @@ Roles are stored in the database in one line with the division of roles names co
 ---
 In the plans:
 
-1. Add support for annotations @Secured
 1. Add the preservation of the entity into a separate database table to be able to bind through the field "id" records
 1. Add examples as individual modules

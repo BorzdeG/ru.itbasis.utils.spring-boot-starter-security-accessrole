@@ -1,15 +1,14 @@
 package ru.itbasis.utils.spring.security.accessrole.converters;
 
-import sample.ru.itbasis.utils.spring.security.accessrole.CoreAccessRole;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
-import org.springframework.test.annotation.DirtiesContext;
 import org.testng.Assert;
 import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
 import ru.itbasis.utils.spring.security.accessrole.AbstractCoreTests;
 import ru.itbasis.utils.spring.security.accessrole.IAccessRole;
+import sample.ru.itbasis.utils.spring.security.accessrole.CoreAccessRole;
 
 public class AccessRole2GrantedAuthorityConverterTest extends AbstractCoreTests {
 	@Autowired
