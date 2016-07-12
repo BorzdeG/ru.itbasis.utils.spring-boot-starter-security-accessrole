@@ -8,14 +8,19 @@ import org.springframework.test.context.testng.AbstractTestNGSpringContextTests;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 import org.testng.Assert;
+import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
 import ru.itbasis.utils.spring.security.accessrole.IAccessRole;
 import sample.ru.itbasis.utils.spring.security.accessrole.CoreAccessRole;
+import sample.ru.itbasis.utils.spring.security.accessrole.CustomAccessRole;
 import sample.ru.itbasis.utils.spring.security.accessrole.TestBootApplication;
 import sample.ru.itbasis.utils.spring.security.accessrole.entity.TestEntity;
 import sample.ru.itbasis.utils.spring.security.accessrole.repository.TestEntityRepository;
 
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+import java.sql.PreparedStatement;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashSet;
@@ -29,6 +34,17 @@ public class AccessRoleJavaTypeDescriptorTest extends AbstractTestNGSpringContex
 	private JdbcTemplate         jdbcTemplate;
 	@Autowired
 	private TestEntityRepository testEntityRepository;
+	@PersistenceContext
+	private EntityManager        entityManager;
+
+	@DataProvider(name = "dataFromStringOne")
+	public static Object[][] dataFromStringOne() {
+		return new Object[][]{
+			{null, null}
+			, {"CORE_GUEST", CoreAccessRole.GUEST}
+			, {"CUSTOM_GUEST", CustomAccessRole.GUEST}
+		};
+	}
 
 	@DataProvider(name = "dataToStringArray")
 	public static Object[][] dataToStringArray() {
@@ -76,9 +92,43 @@ public class AccessRoleJavaTypeDescriptorTest extends AbstractTestNGSpringContex
 	@DataProvider(name = "dataToStringOne")
 	public static Object[][] dataToStringOne() {
 		return new Object[][]{
-			{CoreAccessRole.GUEST, "CORE_GUEST"}
+			{null, null}
+			, {CoreAccessRole.GUEST, "CORE_GUEST"}
 			, {CoreAccessRole.ADMIN, "CORE_ADMIN"}
 		};
+	}
+
+	@BeforeMethod
+	public void setUp() throws Exception {
+		jdbcTemplate.execute("DELETE FROM TestEntity_roleList");
+		jdbcTemplate.execute("DELETE FROM TestEntity_roleSet");
+		jdbcTemplate.execute("DELETE FROM test_entity");
+	}
+
+	@Test(dataProvider = "dataFromStringOne")
+	public void testFromStringOne(final String role, final IAccessRole expectedAccessRole) throws Exception {
+		jdbcTemplate.update(connection -> {
+			PreparedStatement ps = connection.prepareStatement("INSERT INTO test_entity (id, role) VALUES (?,?)");
+			ps.setLong(1, 1);
+			ps.setString(2, role);
+			return ps;
+		});
+		final TestEntity testEntity = entityManager.find(TestEntity.class, 1L);
+		Assert.assertNotNull(testEntity);
+		Assert.assertEquals(testEntity.getRole(), expectedAccessRole);
+	}
+
+	@Test
+	public void testFromStringOneAsNull() throws Exception {
+		jdbcTemplate.update(connection -> {
+			PreparedStatement ps = connection.prepareStatement("INSERT INTO test_entity (id, role) VALUES (?,?)");
+			ps.setLong(1, 1);
+			ps.setString(2, null);
+			return ps;
+		});
+		final TestEntity testEntity = entityManager.find(TestEntity.class, 1L);
+		Assert.assertNotNull(testEntity);
+		Assert.assertNull(testEntity.getRole());
 	}
 
 	@Test(dataProvider = "dataToStringArray")

@@ -55,22 +55,17 @@ public class AccessRoleUserType implements UserType, ApplicationContextAware {
 	}
 
 	@Override
-	public Object nullSafeGet(
-		final ResultSet rs,
-		final String[] names,
-		final SessionImplementor session,
-		final Object owner
-	) throws HibernateException, SQLException {
-		return string2AccessRoleConverter.convert(rs.getString(names[0]));
+	public Object nullSafeGet(final ResultSet rs, final String[] names, final SessionImplementor session, final Object owner) throws HibernateException, SQLException {
+		assert string2AccessRoleConverter != null;
+
+		final String string = rs.getString(names[0]);
+		if (string == null || string.trim().isEmpty()) { return null; }
+
+		return string2AccessRoleConverter.convert(string);
 	}
 
 	@Override
-	public void nullSafeSet(
-		final PreparedStatement st,
-		final Object value,
-		final int index,
-		final SessionImplementor session
-	) throws HibernateException, SQLException {
+	public void nullSafeSet(final PreparedStatement st, final Object value, final int index, final SessionImplementor session) throws HibernateException, SQLException {
 		assert accessRole2StringConverter != null;
 
 		if (value == null) {
