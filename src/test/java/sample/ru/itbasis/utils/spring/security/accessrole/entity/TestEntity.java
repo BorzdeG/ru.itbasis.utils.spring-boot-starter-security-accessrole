@@ -5,10 +5,7 @@ import lombok.EqualsAndHashCode;
 import org.springframework.data.jpa.domain.AbstractPersistable;
 import ru.itbasis.utils.spring.security.accessrole.IAccessRole;
 
-import javax.persistence.Column;
-import javax.persistence.ElementCollection;
-import javax.persistence.Entity;
-import javax.persistence.Table;
+import javax.persistence.*;
 import java.util.List;
 import java.util.Set;
 
@@ -23,9 +20,9 @@ public class TestEntity extends AbstractPersistable<Long> {
 	@Column(name = "roles")
 	private IAccessRole[] roles;
 
-	@ElementCollection
+	@ElementCollection(fetch = FetchType.EAGER)
 	private List<IAccessRole> roleList;
 
-	@ElementCollection
+	@ElementCollection(fetch = FetchType.EAGER)
 	private Set<IAccessRole> roleSet;
 }

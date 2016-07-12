@@ -18,7 +18,6 @@ import java.sql.Types;
 
 public class AccessRoleUserType implements UserType, ApplicationContextAware {
 
-	//	private static AccessRoleComparator       accessRoleComparator;
 	private static AccessRole2StringConverter accessRole2StringConverter;
 	private static String2AccessRoleConverter string2AccessRoleConverter;
 
@@ -88,7 +87,6 @@ public class AccessRoleUserType implements UserType, ApplicationContextAware {
 
 	@Override
 	public void setApplicationContext(final ApplicationContext applicationContext) throws BeansException {
-//		accessRoleComparator = applicationContext.getBean(AccessRoleComparator.class);
 		accessRole2StringConverter = applicationContext.getBean(AccessRole2StringConverter.class);
 		string2AccessRoleConverter = applicationContext.getBean(String2AccessRoleConverter.class);
 	}

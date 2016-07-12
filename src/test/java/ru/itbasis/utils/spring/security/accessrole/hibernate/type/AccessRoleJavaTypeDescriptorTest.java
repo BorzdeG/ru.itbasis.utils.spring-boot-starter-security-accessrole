@@ -20,10 +20,7 @@ import sample.ru.itbasis.utils.spring.security.accessrole.repository.TestEntityR
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.List;
+import java.util.*;
 
 import static org.apache.commons.lang3.StringUtils.EMPTY;
 import static org.apache.commons.lang3.StringUtils.SPACE;
@@ -57,6 +54,31 @@ public class AccessRoleJavaTypeDescriptorTest extends AbstractTestNGSpringContex
 			, {"CUSTOM_GUEST,CORE_GUEST", new IAccessRole[]{CoreAccessRole.GUEST, CustomAccessRole.GUEST}}
 			, {",CORE_GUEST", new IAccessRole[]{CoreAccessRole.GUEST}}
 			, {"CORE_GUEST,", new IAccessRole[]{CoreAccessRole.GUEST}}
+		};
+	}
+
+	@DataProvider(name = "dataFromStringElementCollectionList")
+	public static Object[][] dataFromStringElementCollectionList() {
+		return new Object[][]{
+			{new String[]{}, new ArrayList<IAccessRole>()}
+			, {new String[]{"CORE_ADMIN"}, Collections.singletonList(CoreAccessRole.ADMIN)}
+			, {new String[]{null, "CORE_GUEST"}, Collections.singletonList(CoreAccessRole.GUEST)}
+			, {new String[]{EMPTY, "CORE_GUEST"}, Collections.singletonList(CoreAccessRole.GUEST)}
+			, {new String[]{SPACE, "CORE_GUEST"}, Collections.singletonList(CoreAccessRole.GUEST)}
+			, {new String[]{"CORE_ADMIN", "CORE_GUEST"}, Arrays.asList(CoreAccessRole.ADMIN, CoreAccessRole.GUEST)}
+			, {new String[]{"CORE_ADMIN", "CORE_GUEST", "CORE_GUEST"}, Arrays.asList(CoreAccessRole.ADMIN, CoreAccessRole.GUEST, CoreAccessRole.GUEST)}
+			, {new String[]{"CORE_GUEST", "CORE_ADMIN", "CORE_GUEST"}, Arrays.asList(CoreAccessRole.GUEST, CoreAccessRole.ADMIN, CoreAccessRole.GUEST)}
+		};
+	}
+
+	@DataProvider(name = "dataFromStringElementCollectionSet")
+	public static Object[][] dataFromStringElementCollectionSet() {
+		return new Object[][]{
+			{new String[]{}, new ArrayList<IAccessRole>()}
+			, {new String[]{"CORE_ADMIN"}, Collections.singletonList(CoreAccessRole.ADMIN)}
+			, {new String[]{"CORE_ADMIN", "CORE_GUEST"}, Arrays.asList(CoreAccessRole.ADMIN, CoreAccessRole.GUEST)}
+			, {new String[]{"CORE_ADMIN", "CORE_GUEST", "CORE_GUEST"}, Arrays.asList(CoreAccessRole.ADMIN, CoreAccessRole.GUEST)}
+			, {new String[]{"CORE_GUEST", "CORE_ADMIN", "CORE_GUEST"}, Arrays.asList(CoreAccessRole.ADMIN, CoreAccessRole.GUEST)}
 		};
 	}
 
@@ -150,6 +172,30 @@ public class AccessRoleJavaTypeDescriptorTest extends AbstractTestNGSpringContex
 
 	}
 
+	@Test(dataProvider = "dataFromStringElementCollectionList")
+	public void testFromStringElementCollectionList(final String[] roles, final List<IAccessRole> expectedAccessRoles) throws Exception {
+		jdbcTemplate.update("INSERT INTO test_entity (id) VALUES (1)");
+		for (String role : roles) {
+			jdbcTemplate.update("INSERT INTO TestEntity_roleList (TestEntity_id,roleList) VALUES (1,?)", role);
+		}
+
+		final TestEntity testEntity = entityManager.find(TestEntity.class, 1L);
+		Assert.assertNotNull(testEntity);
+		Assert.assertEquals(testEntity.getRoleList(), expectedAccessRoles);
+	}
+
+	@Test(dataProvider = "dataFromStringElementCollectionSet")
+	public void testFromStringElementCollectionSet(final String[] roles, final List<IAccessRole> expectedAccessRoles) throws Exception {
+		jdbcTemplate.update("INSERT INTO test_entity (id) VALUES (1)");
+		for (String role : roles) {
+			jdbcTemplate.update("INSERT INTO TestEntity_roleSet (TestEntity_id,roleSet) VALUES (1,?)", role);
+		}
+
+		final TestEntity testEntity = entityManager.find(TestEntity.class, 1L);
+		Assert.assertNotNull(testEntity);
+		Assert.assertEquals(testEntity.getRoleSet(), expectedAccessRoles);
+	}
+
 	@Test(dataProvider = "dataFromStringOne")
 	public void testFromStringOne(final String role, final IAccessRole expectedAccessRole) throws Exception {
 		jdbcTemplate.update("INSERT INTO test_entity (id, role) VALUES (1,?)", role);
@@ -166,6 +212,13 @@ public class AccessRoleJavaTypeDescriptorTest extends AbstractTestNGSpringContex
 		final TestEntity testEntity = entityManager.find(TestEntity.class, 1L);
 		Assert.assertNotNull(testEntity);
 		Assert.assertNull(testEntity.getRole());
+		Assert.assertNull(testEntity.getRoles());
+
+		Assert.assertNotNull(testEntity.getRoleList());
+		Assert.assertTrue(testEntity.getRoleList().isEmpty());
+
+		Assert.assertNotNull(testEntity.getRoleSet());
+		Assert.assertTrue(testEntity.getRoleSet().isEmpty());
 	}
 
 	@Test(dataProvider = "dataToStringArray")
