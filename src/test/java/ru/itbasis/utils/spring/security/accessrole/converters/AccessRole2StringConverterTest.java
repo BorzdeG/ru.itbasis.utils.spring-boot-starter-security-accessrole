@@ -15,7 +15,8 @@ public class AccessRole2StringConverterTest extends AbstractCoreTests {
 	@DataProvider(name = "dataConvert")
 	public static Object[][] dataConvert() {
 		return new Object[][]{
-			{CoreAccessRole.GUEST, "CORE_GUEST"}
+			{null, null}
+			, {CoreAccessRole.GUEST, "CORE_GUEST"}
 			, {CoreAccessRole.ADMIN, "CORE_ADMIN"}
 		};
 	}

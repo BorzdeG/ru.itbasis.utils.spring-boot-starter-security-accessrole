@@ -96,6 +96,7 @@ public class AccessRoleJavaTypeDescriptorTest extends AbstractTestNGSpringContex
 		return new Object[][]{
 			{null}
 			, {new IAccessRole[]{}}
+			, {new IAccessRole[]{null}}
 		};
 	}
 

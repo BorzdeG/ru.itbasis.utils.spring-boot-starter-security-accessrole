@@ -18,6 +18,7 @@ public class AccessRoleArray2StringConverterTest extends AbstractCoreTests {
 	public static Object[][] dataConvert() {
 		return new Object[][]{
 			{new IAccessRole[]{}, EMPTY}
+			, {new IAccessRole[]{null}, EMPTY}
 			, {new IAccessRole[]{CoreAccessRole.GUEST}, "CORE_GUEST"}
 			, {new IAccessRole[]{CoreAccessRole.GUEST, CoreAccessRole.ADMIN}, "CORE_ADMIN,CORE_GUEST"}
 			, {new IAccessRole[]{CoreAccessRole.ADMIN, CoreAccessRole.GUEST}, "CORE_ADMIN,CORE_GUEST"}

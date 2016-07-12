@@ -33,6 +33,7 @@ public final class AccessRoleArray2StringConverter implements Converter<IAccessR
 		if (ArrayUtils.isEmpty(source)) { return EMPTY; }
 
 		final List<String> strings = Stream.of(source)
+																			 .filter(accessRole -> accessRole != null)
 																			 .map(accessRole2StringConverter::convert)
 																			 .sorted(String::compareTo)
 																			 .distinct()

@@ -14,6 +14,8 @@ public final class AccessRole2StringConverter implements Converter<IAccessRole, 
 	public String convert(final IAccessRole source) {
 		log.debug("source: {}", source);
 
+		if (source == null) { return null; }
+
 		final String target = source.getFullName();
 		log.debug("target: {}", target);
 		return target;
